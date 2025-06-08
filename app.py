@@ -71,7 +71,7 @@ async def verify_receipt(
         cleaned_phone = ''.join(filter(str.isdigit, phone_number))
         
         # Query Supabase for receipt with matching ID and phone number
-        response = supabase.table("receipts").select("*").eq("receipt_id", receipt_id).execute()
+        response = supabase.table("receipts").select("*").eq("receiptid", receipt_id).execute()
         
         if not response.data:
             return templates.TemplateResponse("error.html", {
@@ -122,7 +122,7 @@ async def download_receipt_pdf(
         cleaned_phone = ''.join(filter(str.isdigit, phone_number))
         
         # Verify receipt and phone number again
-        response = supabase.table("receipts").select("*").eq("receipt_id", receipt_id).execute()
+        response = supabase.table("receipts").select("*").eq("receiptid", receipt_id).execute()
         
         if not response.data:
             raise HTTPException(status_code=404, detail="Receipt not found")
