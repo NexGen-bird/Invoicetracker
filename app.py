@@ -1,13 +1,11 @@
 import os
 import logging
-from typing import Optional
-from fastapi import FastAPI, Request, Form, HTTPException, Response
+from typing import Optional, Union
+from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
-from supabase import create_client, Client
 import weasyprint
-from io import BytesIO
 import tempfile
 
 # Configure logging
@@ -27,11 +25,17 @@ templates = Jinja2Templates(directory="templates")
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    logger.warning("Supabase credentials not found in environment variables")
-    supabase: Optional[Client] = None
-else:
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+try:
+    from supabase import create_client
+    if SUPABASE_URL and SUPABASE_KEY:
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        logger.info("Supabase client initialized successfully")
+    else:
+        supabase = None
+        logger.warning("Supabase credentials not found")
+except Exception as e:
+    logger.error(f"Failed to initialize Supabase client: {e}")
+    supabase = None
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -265,12 +269,17 @@ async def download_receipt_pdf(
         """
         
         # Generate PDF using WeasyPrint
-        pdf_file = weasyprint.HTML(string=html_content).write_pdf()
-        
-        # Create a temporary file to store the PDF
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
-            tmp_file.write(pdf_file)
-            tmp_file_path = tmp_file.name
+        try:
+            html_doc = weasyprint.HTML(string=html_content)
+            pdf_bytes = html_doc.write_pdf()
+            
+            # Create a temporary file to store the PDF
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
+                tmp_file.write(pdf_bytes)
+                tmp_file_path = tmp_file.name
+        except Exception as pdf_error:
+            logger.error(f"PDF generation error: {pdf_error}")
+            raise HTTPException(status_code=500, detail="Failed to generate PDF")
         
         # Return the PDF as a file download
         return FileResponse(
