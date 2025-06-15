@@ -2,7 +2,7 @@
 name = "repl-nix-workspace"
 version = "0.1.0"
 description = "Add your description here"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<4.0"  
 dependencies = [
     "email-validator>=2.2.0",
     "fastapi>=0.115.12",
@@ -12,8 +12,7 @@ dependencies = [
     "jinja2>=3.1.6",
     "psycopg2-binary>=2.9.10",
     "python-multipart>=0.0.20",
-    "supabase>=2.15.2",
+    "supabase>=2.15.2",  
     "uvicorn>=0.34.3",
-    "weasyprint>=65.1",
-    "supabase"
+    "weasyprint>=65.1"
 ]
