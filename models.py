@@ -10,7 +10,7 @@ class Receipt:
         customer_name: str,
         customer_phone: str,
         customer_email: Optional[str] = None,
-        amount: float = 0.0,
+        payment_amount: int = 0,
         description: Optional[str] = None,
         payment_method: Optional[str] = None,
         status: str = "completed",
@@ -20,7 +20,7 @@ class Receipt:
         self.customer_name = customer_name
         self.customer_phone = customer_phone
         self.customer_email = customer_email
-        self.amount = amount
+        self.payment_amount = payment_amount
         self.description = description
         self.payment_method = payment_method
         self.status = status
@@ -33,7 +33,7 @@ class Receipt:
             "customer_name": self.customer_name,
             "customer_phone": self.customer_phone,
             "customer_email": self.customer_email,
-            "amount": self.amount,
+            "payment_amount": self.amount,
             "description": self.description,
             "payment_method": self.payment_method,
             "status": self.status,
@@ -48,9 +48,9 @@ class Receipt:
             customer_name=data.get("customer_name", ""),
             customer_phone=data.get("customer_phone", ""),
             customer_email=data.get("customer_email"),
-            amount=float(data.get("amount", 0.0)),
+            payment_amount=int(data.get("payment_amount", 0)),
             description=data.get("description"),
-            payment_method=data.get("payment_method"),
+            payment_method=data.get("payment_mode"),
             status=data.get("status", "completed"),
             created_at=datetime.fromisoformat(data["created_at"]) if data.get("created_at") else None
         )
