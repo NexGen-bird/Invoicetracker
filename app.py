@@ -8,6 +8,8 @@ from fastapi.responses import HTMLResponse, FileResponse
 from playwright.async_api import async_playwright
 import tempfile
 from datetime import datetime
+from weasyprint import HTML
+import io
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -355,18 +357,22 @@ async def download_receipt_pdf(
         # Generate PDF using Playwright
         tmp_file_path = None
         try:
-            async with async_playwright() as p:
-                browser = await p.chromium.launch()
-                page = await browser.new_page()
-                await page.set_content(html_content, wait_until='networkidle')
-                # tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-                # await page.pdf(path=tmp.name, format="A4", print_background=True)
-                # tmp_file_path = tmp.name
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
-                    await page.pdf(path=tmp_file.name, format="A4", print_background=True)
-                    tmp_file_path = tmp_file.name
-                await browser.close()
-                print("playwright closed..")
+            # async with async_playwright() as p:
+            #     browser = await p.chromium.launch()
+            #     page = await browser.new_page()
+            #     await page.set_content(html_content, wait_until='networkidle')
+            #     # tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+            #     # await page.pdf(path=tmp.name, format="A4", print_background=True)
+            #     # tmp_file_path = tmp.name
+            #     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+            #         await page.pdf(path=tmp_file.name, format="A4", print_background=True)
+            #         tmp_file_path = tmp_file.name
+            #     await browser.close()
+            #     print("playwright closed..")
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+                HTML(string=html_content, base_url=os.getcwd()).write_pdf(tmp_file.name)
+                tmp_file_path = tmp_file.name
+                print(f"PDF generated: receipt_{receipt_id}.pdf")
         except Exception as pdf_error:
             logger.error(f"PDF generation error: {pdf_error}")
             raise HTTPException(status_code=500, detail="Failed to generate PDF")
