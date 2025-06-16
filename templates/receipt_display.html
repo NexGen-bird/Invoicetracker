@@ -272,7 +272,7 @@
         </div>
     </div>
 </div> -->
-    
+
 <script>
     const phoneFromSession = sessionStorage.getItem('verifiedPhone');
     console.log(phoneFromSession)
@@ -282,7 +282,16 @@
             document.getElementById('hiddenPhone').value = phoneFromSession;
         }
         console.log(document.getElementById('hiddenPhone').value)
+        
 </script>
-
+<script>
+    document.getElementById("downloadBtn").addEventListener("click", async () => {
+        Swal.fire({
+        icon: "success",
+        title: "Download Started",
+        text: "Please check your Downloads folder.",
+      });
+    });
+</script>
 </body>
 </html>
