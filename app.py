@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
-from playwright.async_api import async_playwright
+# from playwright.async_api import async_playwright
 import tempfile
 from datetime import datetime
 from weasyprint import HTML
