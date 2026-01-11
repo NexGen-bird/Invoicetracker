@@ -572,6 +572,7 @@ async def generate_pdf():
                 <span></span>
                 <div><span>Abhijit Shinde</span></div>
             </div>
+            <div style="font-size:13px; color:#666;">Note: Fees once paid are non-refundable under any circumstances.</div>
         </div>
 
         <script>
